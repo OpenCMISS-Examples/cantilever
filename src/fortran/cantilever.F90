@@ -60,6 +60,7 @@ PROGRAM CANTILEVEREXAMPLE
   !CMISS variables
   TYPE(cmfe_BasisType) :: DisplacementBasis,PressureBasis
   TYPE(cmfe_BoundaryConditionsType) :: BoundaryConditions
+  TYPE(cmfe_ComputationEnvironmentType) :: computationEnvironment
   TYPE(cmfe_CoordinateSystemType) :: CoordinateSystem, WorldCoordinateSystem
   TYPE(cmfe_MeshType) :: Mesh
   TYPE(cmfe_DecompositionType) :: Decomposition
@@ -163,8 +164,9 @@ PROGRAM CANTILEVEREXAMPLE
   WRITE(*,'("Scaling type: ", i3)') ScalingType
 
   !Get the number of computational nodes and this computational node number
-  CALL cmfe_ComputationalNumberOfNodesGet(NumberOfComputationalNodes,Err)
-  CALL cmfe_ComputationalNodeNumberGet(ComputationalNodeNumber,Err)
+  CALL cmfe_ComputationEnvironment_Initialise(computationEnvironment,err)
+  CALL cmfe_ComputationEnvironment_NumberOfWorldNodesGet(computationEnvironment,numberOfComputationalNodes,err)
+  CALL cmfe_ComputationEnvironment_WorldNodeNumberGet(computationEnvironment,computationalNodeNumber,err)
 
   NumberOfDomains=NumberOfComputationalNodes
 
