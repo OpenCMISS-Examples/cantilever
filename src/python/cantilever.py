@@ -31,6 +31,9 @@ equationsSetFieldUserNumber = 6
 equationsSetUserNumber = 1
 problemUserNumber = 1
 
+worldRegion = iron.Region()
+iron.Context.WorldRegionGet(worldRegion)
+
 # Set all diganostic levels on for testing
 #iron.DiagnosticsSetOn(iron.DiagnosticTypes.All,[1,2,3,4,5],"Diagnostics",["DOMAIN_MAPPINGS_LOCAL_FROM_GLOBAL_CALCULATE"])
 
@@ -45,12 +48,14 @@ else:
     numberOfXi = 3
 
 # Get the number of computational nodes and this computational node number
-numberOfComputationalNodes = iron.ComputationalNumberOfNodesGet()
-computationalNodeNumber = iron.ComputationalNodeNumberGet()
+computationEnvironment = iron.ComputationEnvironment()
+iron.Context.ComputationEnvironmentGet(computationEnvironment)
+numberOfComputationalNodes = computationEnvironment.NumberOfWorldNodesGet()
+computationalNodeNumber = computationEnvironment.WorldNodeNumberGet()
 
 # Create a 3D rectangular cartesian coordinate system
 coordinateSystem = iron.CoordinateSystem()
-coordinateSystem.CreateStart(coordinateSystemUserNumber)
+coordinateSystem.CreateStart(coordinateSystemUserNumber,iron.Context)
 coordinateSystem.DimensionSet(3)
 coordinateSystem.CreateFinish()
 
@@ -63,7 +68,7 @@ region.CreateFinish()
 
 # Define basis
 basis = iron.Basis()
-basis.CreateStart(basisUserNumber)
+basis.CreateStart(basisUserNumber,iron.Context)
 if InterpolationType in (1,2,3,4):
     basis.type = iron.BasisTypes.LAGRANGE_HERMITE_TP
 elif InterpolationType in (7,8,9):
@@ -77,7 +82,7 @@ basis.CreateFinish()
 if(usePressureBasis):
     # Define pressure basis
     pressureBasis = iron.Basis()
-    pressureBasis.CreateStart(pressureBasisUserNumber)
+    pressureBasis.CreateStart(pressureBasisUserNumber,iron.Context)
     if InterpolationType in (1,2,3,4):
         pressureBasis.type = iron.BasisTypes.LAGRANGE_HERMITE_TP
     elif InterpolationType in (7,8,9):
@@ -225,7 +230,7 @@ problem = iron.Problem()
 problemSpecification = [iron.ProblemClasses.ELASTICITY,
         iron.ProblemTypes.FINITE_ELASTICITY,
         iron.ProblemSubtypes.NONE]
-problem.CreateStart(problemUserNumber, problemSpecification)
+problem.CreateStart(problemUserNumber,iron.Context,problemSpecification)
 problem.CreateFinish()
 
 # Create the problem control loop
@@ -240,7 +245,7 @@ nonLinearSolver = iron.Solver()
 linearSolver = iron.Solver()
 problem.SolversCreateStart()
 problem.SolverGet([iron.ControlLoopIdentifiers.NODE],1,nonLinearSolver)
-nonLinearSolver.outputType = iron.SolverOutputTypes.PROGRESS
+nonLinearSolver.outputType = iron.SolverOutputTypes.MONITOR
 nonLinearSolver.NewtonJacobianCalculationTypeSet(iron.JacobianCalculationTypes.FD)
 nonLinearSolver.NewtonAbsoluteToleranceSet(1e-14)
 nonLinearSolver.NewtonSolutionToleranceSet(1e-14)
