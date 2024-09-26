@@ -45,8 +45,9 @@ else:
     numberOfXi = 3
 
 # Get the number of computational nodes and this computational node number
-numberOfComputationalNodes = iron.ComputationalNumberOfNodesGet()
-computationalNodeNumber = iron.ComputationalNodeNumberGet()
+computationEnvironment = iron.ComputationEnvironment()
+numberOfComputationalNodes = computationEnvironment.NumberOfWorldNodesGet()
+computationalNodeNumber = computationEnvironment.WorldNodeNumberGet()
 
 # Create a 3D rectangular cartesian coordinate system
 coordinateSystem = iron.CoordinateSystem()
@@ -240,7 +241,7 @@ nonLinearSolver = iron.Solver()
 linearSolver = iron.Solver()
 problem.SolversCreateStart()
 problem.SolverGet([iron.ControlLoopIdentifiers.NODE],1,nonLinearSolver)
-nonLinearSolver.outputType = iron.SolverOutputTypes.PROGRESS
+nonLinearSolver.outputType = iron.SolverOutputTypes.MONITOR
 nonLinearSolver.NewtonJacobianCalculationTypeSet(iron.JacobianCalculationTypes.FD)
 nonLinearSolver.NewtonAbsoluteToleranceSet(1e-14)
 nonLinearSolver.NewtonSolutionToleranceSet(1e-14)
